@@ -65,6 +65,19 @@ img {
 
 <div id="TOC">
 <ul>
+<li><a href="#the-basics">The basics</a><ul>
+<li><a href="#the-first-functions-to-learn">The first functions to learn</a></li>
+<li><a href="#important-operators-and-assignments">Important operators and assignments</a></li>
+<li><a href="#comparison">Comparison</a></li>
+<li><a href="#basic-math">Basic math</a></li>
+<li><a href="#functions-to-do-with-functions">Functions to do with functions</a></li>
+<li><a href="#logical-and-sets">Logical and sets</a></li>
+<li><a href="#vectors-and-matrices">Vectors and matrices</a></li>
+<li><a href="#making-vectors">Making vectors</a></li>
+<li><a href="#lists-data.frames">Lists &amp; data.frames</a></li>
+<li><a href="#control-flow">Control Flow</a></li>
+<li><a href="#apply-friends">Apply &amp; friends</a></li>
+</ul></li>
 <li><a href="#common-data-structures">Common data structures</a><ul>
 <li><a href="#character-manipulation">Character manipulation</a></li>
 <li><a href="#factors">Factors</a></li>
@@ -72,14 +85,401 @@ img {
 <li><a href="#inputoutput">Input/Output</a><ul>
 <li><a href="#output">Output</a></li>
 </ul></li>
-<li><a href="#the-basics">The basics</a><ul>
-<li><a href="#important-operators-and-assignments">Important operators and assignments</a></li>
-<li><a href="#logical-and-sets">Logical and sets</a></li>
-<li><a href="#making-vectors">Making vectors</a></li>
-</ul></li>
 </ul>
 </div>
 
+<div id="the-basics" class="section level1">
+<h1>The basics</h1>
+<div id="the-first-functions-to-learn" class="section level2">
+<h2>The first functions to learn</h2>
+<div id="get-help-on-a-topic-here-for-str" class="section level3">
+<h3>Get help on a topic (here for <code>str</code>)</h3>
+<pre class="r"><code>?str</code></pre>
+</div>
+<div id="display-the-structure-of-an-arbitrary-r-object" class="section level3">
+<h3>Display the structure of an arbitrary R object</h3>
+<pre class="r"><code>str(data.frame(A_col = LETTERS[1:5], 
+               B_col = letters[1:5],
+               C_col = rnorm(5, mean = 2, sd = 1)))</code></pre>
+<pre><code>## 'data.frame':    5 obs. of  3 variables:
+##  $ A_col: Factor w/ 5 levels &quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;,..: 1 2 3 4 5
+##  $ B_col: Factor w/ 5 levels &quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,..: 1 2 3 4 5
+##  $ C_col: num  2.408 2.117 2.344 0.838 4.145</code></pre>
+<pre class="r"><code>str(data.frame(A_col = LETTERS[1:5], 
+               B_col = letters[1:5],
+               C_col = rnorm(5, mean = 2, sd = 1),
+               stringsAsFactors = FALSE))</code></pre>
+<pre><code>## 'data.frame':    5 obs. of  3 variables:
+##  $ A_col: chr  &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; ...
+##  $ B_col: chr  &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; ...
+##  $ C_col: num  2.21 1.1 1.95 2.29 1.23</code></pre>
+<pre class="r"><code>str(seq_len(5))</code></pre>
+<pre><code>##  int [1:5] 1 2 3 4 5</code></pre>
+<pre class="r"><code>str(matrix(rnorm(10, mean = 5, sd = 2), nrow = 5, ncol = 2))</code></pre>
+<pre><code>##  num [1:5, 1:2] 6.08 6.9 6.09 1.87 1.79 ...</code></pre>
+</div>
+</div>
+<div id="important-operators-and-assignments" class="section level2">
+<h2>Important operators and assignments</h2>
+<div id="in" class="section level3">
+<h3>%in%</h3>
+<p><code>%in%</code> returns a vector with logical elements indicating whether an element of vector <code>x</code> is also part of a vector <code>y</code>.</p>
+<p>Example</p>
+<pre class="r"><code>c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) %in% &quot;B&quot;</code></pre>
+<pre><code>## [1] FALSE  TRUE FALSE</code></pre>
+</div>
+<div id="match" class="section level3">
+<h3>match()</h3>
+<p><code>match(x, y)</code> returns a vector of the positions of (first) matches of its first argument <code>x</code> in its second <code>y</code>.</p>
+<p>Examples</p>
+<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;))</code></pre>
+<pre><code>## [1]  1  2 NA  2</code></pre>
+<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;), nomatch = 0)</code></pre>
+<pre><code>## [1] 1 2 0 2</code></pre>
+<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;), incomparables = &quot;B&quot;)</code></pre>
+<pre><code>## [1]  1 NA NA NA</code></pre>
+</div>
+<div id="assignments" class="section level3">
+<h3>Assignments</h3>
+<p>The operators <code>&lt;-</code> and <code>=</code> assign into the environment in which it they are evaluated. The operator <code>&lt;-</code> can be used anywhere whereas the operator <code>=</code> is only allowed at the top level or as one of the subexpressions in a braced list of expressions. The <code>&lt;&lt;-</code> operator is used normally only in functions and causes a search through parent environments for an existing defition oof the variable being assigned. This operator should be avoided since it writes to the global environment and makes debugging harder.</p>
+</div>
+<div id="extract-or-replace-parts-of-an-object" class="section level3">
+<h3>Extract or replace parts of an object</h3>
+<p>Operators acting on vectors, matrices, arrays and lists to extract or replace parts. There are three differetnt operators for data extraction, namely <code>[</code>, <code>[[</code> and <code>$</code>. The most important distinction between them is that the <code>[</code> can select more than one element whereas the other two select a single element, each. Moreover, <code>$</code> is only valid for recursive (list-like) objects.</p>
+<p>Usage:</p>
+<pre class="r"><code>## Vectors
+# Generate a random, named vector.
+set.seed(30943)
+vec &lt;- rnorm(10, mean = 10, sd = 1)
+names(vec) &lt;- letters[seq_len(length(vec))]
+
+# Extract the first element from this vector and preserve name attributes.
+vec[1]</code></pre>
+<pre><code>##        a 
+## 11.21898</code></pre>
+<pre class="r"><code># Extract the first element from this vector and drop name attributes.
+vec[[1]]</code></pre>
+<pre><code>## [1] 11.21898</code></pre>
+<pre class="r"><code>## Matrices
+mat &lt;- matrix(sample(c(0, 1), size = 6, replace = TRUE), nrow = 2, ncol = 3,
+              dimnames = list(paste0(&quot;Row_&quot;, seq_len(2)),
+                              paste0(&quot;Col_&quot;, seq_len(3))))
+# Extract the element from the 2nd row and the third column through indices.
+mat[2, 3]</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code># Extract the element from the 2nd row and the third column through names.
+mat[&quot;Row_2&quot;, &quot;Col_3&quot;]</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code># Extract the 2nd column.
+mat[, 2]</code></pre>
+<pre><code>## Row_1 Row_2 
+##     1     0</code></pre>
+<pre class="r"><code># Extract the 2nd column, but retain the class &quot;matrix&quot;.
+mat[, 2, drop = FALSE]</code></pre>
+<pre><code>##       Col_2
+## Row_1     1
+## Row_2     0</code></pre>
+<pre class="r"><code># Extract the first and the second column.
+mat[, paste0(&quot;Col_&quot;, c(1, 2))]</code></pre>
+<pre><code>##       Col_1 Col_2
+## Row_1     0     1
+## Row_2     0     0</code></pre>
+<pre class="r"><code>mat[, c(1, 2)]</code></pre>
+<pre><code>##       Col_1 Col_2
+## Row_1     0     1
+## Row_2     0     0</code></pre>
+<pre class="r"><code>## Recursive (list-like) objects (lists, data.frames).
+lst &lt;- list(First = seq_len(10), Second = LETTERS[1:4], 
+            Third = letters[1:2])
+lst[[&quot;Second&quot;]]</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot;</code></pre>
+<pre class="r"><code>lst$Second</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot;</code></pre>
+<pre class="r"><code>lst[c(1, 3)]</code></pre>
+<pre><code>## $First
+##  [1]  1  2  3  4  5  6  7  8  9 10
+## 
+## $Third
+## [1] &quot;a&quot; &quot;b&quot;</code></pre>
+</div>
+<div id="return-the-first-or-last-part-of-an-object" class="section level3">
+<h3>Return the first or last part of an object</h3>
+<p>Returns the first or last parts of a vector, matrix, table, data frame or function.</p>
+<pre class="r"><code>data(cars)
+head(cars)</code></pre>
+<pre><code>##   speed dist
+## 1     4    2
+## 2     4   10
+## 3     7    4
+## 4     7   22
+## 5     8   16
+## 6     9   10</code></pre>
+<pre class="r"><code>head(cars, n = 10)</code></pre>
+<pre><code>##    speed dist
+## 1      4    2
+## 2      4   10
+## 3      7    4
+## 4      7   22
+## 5      8   16
+## 6      9   10
+## 7     10   18
+## 8     10   26
+## 9     10   34
+## 10    11   17</code></pre>
+<pre class="r"><code>head(letters[1:10])</code></pre>
+<pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; &quot;e&quot; &quot;f&quot;</code></pre>
+<pre class="r"><code>tail(cars, n = 7)</code></pre>
+<pre><code>##    speed dist
+## 44    22   66
+## 45    23   54
+## 46    24   70
+## 47    24   92
+## 48    24   93
+## 49    24  120
+## 50    25   85</code></pre>
+</div>
+<div id="subset" class="section level3">
+<h3>subset()</h3>
+<p>Subsetting vectors, matrices and data frames. This function should only be used interactively.</p>
+<pre class="r"><code>data(USArrests)
+dim(USArrests)</code></pre>
+<pre><code>## [1] 50  4</code></pre>
+<pre class="r"><code>dim(subset(USArrests, Murder &lt; 10 &amp; UrbanPop &gt;= 50))</code></pre>
+<pre><code>## [1] 30  4</code></pre>
+</div>
+<div id="with" class="section level3">
+<h3>with()</h3>
+<p>Evaluate the supplied data in a different environment. This is similar to <code>attach</code> since the elements within the <code>with</code> function do not need to be preceded with <code>x$</code> anymore, but can rather be accessed directly.</p>
+<p>Example</p>
+<pre class="r"><code>dummy &lt;- data.frame(A = c(5, 7, 4), B = c(3, 8, 6), C = letters[1:3])
+with(dummy, dummy[A == 5, ])</code></pre>
+<pre><code>##   A B C
+## 1 5 3 a</code></pre>
+<pre class="r"><code>with(dummy, dummy[C %in% c(&quot;a&quot;, &quot;c&quot;)])</code></pre>
+<pre><code>##   A C
+## 1 5 a
+## 2 7 b
+## 3 4 c</code></pre>
+</div>
+<div id="within" class="section level3">
+<h3>within()</h3>
+<p>Allows the construction of a separate environment like <code>with()</code> does but elements of the supplied data can be accessed and transformed within this function, too.</p>
+<p>Example</p>
+<pre class="r"><code>wi_df &lt;- within(dummy, {
+  D &lt;- cumsum(A)
+  E &lt;- pmin(A, B)
+  })
+wi_df</code></pre>
+<pre><code>##   A B C E  D
+## 1 5 3 a 3  5
+## 2 7 8 b 7 12
+## 3 4 6 c 4 16</code></pre>
+</div>
+<div id="assign" class="section level3">
+<h3>assign()</h3>
+<p>Assign a value to a name in an environment.</p>
+<p>Example</p>
+<pre class="r"><code>assign(&quot;x&quot;, value = 5)
+x</code></pre>
+<pre><code>## [1] 5</code></pre>
+</div>
+<div id="get" class="section level3">
+<h3>get()</h3>
+<p>Search by name for an object. <code>get</code> is the reverse function of <code>assign</code>. It is particularly useful when indices such as <code>i</code> are used in loops and the user desires to print the name of the currently evaluated object <code>i</code> as the title of a plot or the name of a file.</p>
+<p>Example</p>
+<pre class="r"><code>set.seed(1234)
+
+smp_df &lt;- data.frame(
+  Smp.A = rnorm(n = 1000, mean = 50, sd = 3),
+  Smp.B = runif(n = 1000, min = 80, max = 135),
+  Smp.C = c(rnorm(n = 500, mean = 30, sd = 2),
+            runif(n = 500, min = 32, max = 40)),
+  Smp.D = rpois(n = 1000, lambda = 5)
+  )
+
+def.par &lt;- par(no.readonly = TRUE) # save default, for resetting...
+layout(mat = matrix(data = c(1, 2, 3, 4), nrow = 2, ncol = 2, byrow = TRUE))
+
+for(i in colnames(smp_df)) {
+  
+  hist(smp_df[, i], breaks = 50, main = get(&quot;i&quot;))
+  
+}</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+</div>
+</div>
+<div id="comparison" class="section level2">
+<h2>Comparison</h2>
+<div id="all.equal-identical" class="section level3">
+<h3>all.equal, identical</h3>
+<p>“Near equality” can be tested using <code>all.equal(x, y)</code> whereas <code>identical(x, y)</code> tests for exact equality of two objects <code>x</code> and <code>y</code>.</p>
+<pre class="r"><code>set.seed(1309)
+x &lt;- seq_len(10)
+# Add some normally-distributed random noise to the data.
+y &lt;- x + rnorm(10, mean = 0, sd = 0.0000001)
+all.equal(x, y)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>identical(x, y)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+</div>
+<div id="relational-operators" class="section level3">
+<h3>Relational operators (!=, ==, &gt;, &gt;=, &lt;, &lt;=)</h3>
+<p>Binary operators, which allow the comparison of values in atomic vectors.</p>
+<pre class="r"><code>x &lt;- seq_len(10)
+x[x != 5]</code></pre>
+<pre><code>## [1]  1  2  3  4  6  7  8  9 10</code></pre>
+<pre class="r"><code>x[x == 5]</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>x[x &gt; 5]</code></pre>
+<pre><code>## [1]  6  7  8  9 10</code></pre>
+<pre class="r"><code>x[x &gt;= 5]</code></pre>
+<pre><code>## [1]  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>x[x &lt; 5]</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>x[x &lt;= 5]</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+</div>
+<div id="is.na-complete.cases" class="section level3">
+<h3>is.na, complete.cases</h3>
+</div>
+<div id="is.finite" class="section level3">
+<h3>is.finite</h3>
+</div>
+</div>
+<div id="basic-math" class="section level2">
+<h2>Basic math</h2>
+</div>
+<div id="functions-to-do-with-functions" class="section level2">
+<h2>Functions to do with functions</h2>
+</div>
+<div id="logical-and-sets" class="section level2">
+<h2>Logical and sets</h2>
+<div id="xor" class="section level3">
+<h3>&amp;, |, !, xor</h3>
+</div>
+<div id="all-any" class="section level3">
+<h3>all, any</h3>
+</div>
+<div id="intersect-union-setdiff-setequal" class="section level3">
+<h3>intersect, union, setdiff, setequal</h3>
+<p><code>union</code> combines all elements of two vectors in a new vector of unique elements. Example</p>
+<pre class="r"><code>union(x = c(1, 2, 3, 4), y = c(3, 4, 5))</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<p><code>setdiff</code> returns the elements in vector <code>x</code>, which are not in <code>y</code> Example</p>
+<pre class="r"><code>setdiff(x = c(1, 2, 3, 4), y = c(3, 4, 5))</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<pre class="r"><code>setdiff(x = c(3, 4, 5), y = c(1, 2, 3, 4))</code></pre>
+<pre><code>## [1] 5</code></pre>
+<p><code>setequal</code> returns a logical vector indicating whether all elements in vector <code>x</code> are also elements of vector <code>y</code>. Example</p>
+<pre class="r"><code>setequal(x = c(3, 1, 2), c(2, 3, 1))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>setequal(x = c(1, 2, 3), c(2, 3))</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+</div>
+<div id="which" class="section level3">
+<h3>which()</h3>
+<p><code>which</code> provides the indices of elements for which a logical condition is <code>TRUE</code>. Example</p>
+<pre class="r"><code>which(c(3, 4, 6) %in% c(6, 3))</code></pre>
+<pre><code>## [1] 1 3</code></pre>
+</div>
+</div>
+<div id="vectors-and-matrices" class="section level2">
+<h2>Vectors and matrices</h2>
+</div>
+<div id="making-vectors" class="section level2">
+<h2>Making vectors</h2>
+<div id="c-rep-rep_len-seq-seq_len-seq_along" class="section level3">
+<h3>c, rep, rep_len, seq, seq_len, seq_along</h3>
+<p>The <code>rep</code> function replicates elmeents of vectors and lists. Example</p>
+<pre class="r"><code>rep(x = 1:4, times = 2)</code></pre>
+<pre><code>## [1] 1 2 3 4 1 2 3 4</code></pre>
+<pre class="r"><code>rep(x = 1:4, each = 2)</code></pre>
+<pre><code>## [1] 1 1 2 2 3 3 4 4</code></pre>
+<pre class="r"><code>rep(x = 1:4, times = c(2, 1, 2, 1))</code></pre>
+<pre><code>## [1] 1 1 2 3 3 4</code></pre>
+<pre class="r"><code>rep(x = 1:4, each = 2, len = 4)</code></pre>
+<pre><code>## [1] 1 1 2 2</code></pre>
+<pre class="r"><code>rep(x = 1:4, each = 2, len = 10)</code></pre>
+<pre><code>##  [1] 1 1 2 2 3 3 4 4 1 1</code></pre>
+<pre class="r"><code>rep(x = 1:2, each = 2, times = 3)</code></pre>
+<pre><code>##  [1] 1 1 2 2 1 1 2 2 1 1 2 2</code></pre>
+<p><code>rep_len</code> replicates and outputs a given number of elements as specified by <code>length</code>. Example</p>
+<pre class="r"><code>rep_len(x = c(1:4), length = 10)</code></pre>
+<pre><code>##  [1] 1 2 3 4 1 2 3 4 1 2</code></pre>
+<p>Regular sequences can be created using <code>seq</code>. Example</p>
+<pre class="r"><code>seq(from = 0, to = 1, length.out = 1)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>seq(from = 1, to = 9, by = 2)</code></pre>
+<pre><code>## [1] 1 3 5 7 9</code></pre>
+<pre class="r"><code>seq(from = 1, to = 6, by = 3)</code></pre>
+<pre><code>## [1] 1 4</code></pre>
+<pre class="r"><code>seq_len(length.out = 4)</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>seq_along(along.with = c(0.1, 34, 8, 9, 2))</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+</div>
+<div id="rev" class="section level3">
+<h3>rev</h3>
+</div>
+<div id="sample-choose-factorial-combn" class="section level3">
+<h3>sample, choose, factorial, combn</h3>
+<p><code>sample()</code> takes a sample of the specified size form the elements of <code>x</code> either with or without replacement. Example</p>
+<pre class="r"><code>sample(x = LETTERS, size = 5, replace = TRUE)</code></pre>
+<pre><code>## [1] &quot;O&quot; &quot;Z&quot; &quot;R&quot; &quot;A&quot; &quot;J&quot;</code></pre>
+</div>
+<div id="isas.characternumericlogical" class="section level3">
+<h3>(is/as).(character/numeric/logical/…)</h3>
+</div>
+</div>
+<div id="lists-data.frames" class="section level2">
+<h2>Lists &amp; data.frames</h2>
+<div id="list-unlist" class="section level3">
+<h3>list, unlist</h3>
+</div>
+<div id="data.frame-as.data.frame" class="section level3">
+<h3>data.frame, as.data.frame</h3>
+</div>
+<div id="split" class="section level3">
+<h3>split</h3>
+</div>
+<div id="expand.grid" class="section level3">
+<h3>expand.grid</h3>
+</div>
+</div>
+<div id="control-flow" class="section level2">
+<h2>Control Flow</h2>
+<div id="if-short-circuiting" class="section level3">
+<h3>if, &amp;&amp;, || (short circuiting)</h3>
+</div>
+<div id="for-while" class="section level3">
+<h3>for, while</h3>
+</div>
+<div id="next-break" class="section level3">
+<h3>next, break</h3>
+</div>
+<div id="switch" class="section level3">
+<h3>switch</h3>
+</div>
+<div id="ifelse" class="section level3">
+<h3>ifelse</h3>
+</div>
+</div>
+<div id="apply-friends" class="section level2">
+<h2>Apply &amp; friends</h2>
+<div id="lapply-sapply-vapply" class="section level3">
+<h3>lapply, sapply, vapply</h3>
+</div>
+<div id="apply" class="section level3">
+<h3>apply</h3>
+</div>
+<div id="tapply" class="section level3">
+<h3>tapply</h3>
+</div>
+<div id="replicate" class="section level3">
+<h3>replicate</h3>
+</div>
+</div>
+</div>
 <div id="common-data-structures" class="section level1">
 <h1>Common data structures</h1>
 <div id="character-manipulation" class="section level2">
@@ -358,170 +758,6 @@ format(2^31-1, scientific = TRUE, digits = 4)</code></pre>
 <div id="capture.output" class="section level3">
 <h3>capture.output()</h3>
 <p>Evaluates its arguments with the output being returned as a character string or send to a file. This function related to <code>sink</code> in the same way as <code>with</code> relates to <code>attach</code>.</p>
-</div>
-</div>
-</div>
-<div id="the-basics" class="section level1">
-<h1>The basics</h1>
-<div id="important-operators-and-assignments" class="section level2">
-<h2>Important operators and assignments</h2>
-<div id="in" class="section level3">
-<h3>%in%</h3>
-<p><code>%in%</code> returns a vector with logical elements indicating whether an element of vector <code>x</code> is also part of a vector <code>y</code>.</p>
-<p>Example</p>
-<pre class="r"><code>c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;) %in% &quot;B&quot;</code></pre>
-<pre><code>## [1] FALSE  TRUE FALSE</code></pre>
-</div>
-<div id="match" class="section level3">
-<h3>match()</h3>
-<p><code>match(x, y)</code> returns a vector of the positions of (first) matches of its first argument <code>x</code> in its second <code>y</code>.</p>
-<p>Examples</p>
-<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;))</code></pre>
-<pre><code>## [1]  1  2 NA  2</code></pre>
-<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;), nomatch = 0)</code></pre>
-<pre><code>## [1] 1 2 0 2</code></pre>
-<pre class="r"><code>match(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;B&quot;), c(&quot;A&quot;, &quot;B&quot;), incomparables = &quot;B&quot;)</code></pre>
-<pre><code>## [1]  1 NA NA NA</code></pre>
-</div>
-<div id="with" class="section level3">
-<h3>with()</h3>
-<p>Evaluate the supplied data in a different environment. This is similar to <code>attach</code> since the elements within the <code>with</code> function do not need to be preceded with <code>x$</code> anymore, but can rather be accessed directly.</p>
-<p>Example</p>
-<pre class="r"><code>dummy &lt;- data.frame(A = c(5, 7, 4), B = c(3, 8, 6), C = letters[1:3])
-print.xtable(xtable(dummy), floating = FALSE, comment = FALSE)</code></pre>
-
-<pre class="r"><code>print(xtable(with(dummy, dummy[A == 5, ])), floating = FALSE, comment = FALSE)</code></pre>
-
-<pre class="r"><code>print(xtable(with(dummy, dummy[C %in% c(&quot;a&quot;, &quot;c&quot;)])), floating = FALSE, 
-      comment = FALSE)</code></pre>
-
-</div>
-<div id="within" class="section level3">
-<h3>within()</h3>
-<p>Allows the construction of a separate environment like <code>with()</code> does but elements of the supplied data can be accessed and transformed within this function, too.</p>
-<p>Example</p>
-<pre class="r"><code>wi_df &lt;- within(dummy, {
-  D &lt;- cumsum(A)
-  E &lt;- pmin(A, B)
-  })
-print(xtable(wi_df), floating = FALSE, comment = FALSE)</code></pre>
-<pre><code>## \begin{tabular}{rrrlrr}
-##   \hline
-##  &amp; A &amp; B &amp; C &amp; E &amp; D \\ 
-##   \hline
-## 1 &amp; 5.00 &amp; 3.00 &amp; a &amp; 3.00 &amp; 5.00 \\ 
-##   2 &amp; 7.00 &amp; 8.00 &amp; b &amp; 7.00 &amp; 12.00 \\ 
-##   3 &amp; 4.00 &amp; 6.00 &amp; c &amp; 4.00 &amp; 16.00 \\ 
-##    \hline
-## \end{tabular}</code></pre>
-</div>
-<div id="assign" class="section level3">
-<h3>assign()</h3>
-<p>Assign a value to a name in an environment.</p>
-<p>Example</p>
-<pre class="r"><code>assign(&quot;x&quot;, value = 5)
-x</code></pre>
-<pre><code>## [1] 5</code></pre>
-</div>
-<div id="get" class="section level3">
-<h3>get()</h3>
-<p>Search by name for an object. <code>get</code> is the reverse function of <code>assign</code>. It is particularly useful when indices such as <code>i</code> are used in loops and the user desires to print the name of the currently evaluated object <code>i</code> as the title of a plot or the name of a file.</p>
-<p>Example</p>
-<pre class="r"><code>set.seed(1234)
-
-smp_df &lt;- data.frame(
-  Smp.A = rnorm(n = 1000, mean = 50, sd = 3),
-  Smp.B = runif(n = 1000, min = 80, max = 135),
-  Smp.C = c(rnorm(n = 500, mean = 30, sd = 2),
-            runif(n = 500, min = 32, max = 40)),
-  Smp.D = rpois(n = 1000, lambda = 5)
-  )
-
-def.par &lt;- par(no.readonly = TRUE) # save default, for resetting...
-layout(mat = matrix(data = c(1, 2, 3, 4), nrow = 2, ncol = 2, byrow = TRUE))
-
-for(i in colnames(smp_df)) {
-  
-  hist(smp_df[, i], breaks = 50, main = get(&quot;i&quot;))
-  
-}</code></pre>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHgCAMAAABNUi8GAAADAFBMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////isF19AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO2dCVxU5frHDyqCIBggKioiqMgiqJC4paiMIm60kUtdzSVLvd4WS0xb1Ki4ltGq4paZ3Aoz9d7M9LR7W/6JtF0vdZNrNy1zAwUXlOX9v+97ZoCRmXPes8zMO8Pz/XzmHc6c55z3nd98YZgzZxEQAHCM4OoBAIAcICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANbwLWr1pYEjbPg+fVq6cIQjbHD8ed4cxz0wB0yp+5WWnDEoO3gVdiIPyEoS4SqXCy4GCkOmMEbk3jHlSQTG31TlnWPbhXNBTgrD8xJXd/sKLSpU7cZw+550xJneGNc9MIb2y8peHBeGoU4YlA+eCfiYIRLqVqc+iSkHYPSJw6A/vJ/kP+QadFoQP09sN/Ed95WQhvZXwuutG6h6w5pkpjMdtuSAcdOFgKZwL+l9BSN9RQX/EgfriN6eQVriJrsOBdvJqIXi9by684CcUmIRJrhupe8CaZ6Ywprz8SLYQXuPCwVI4FxRlk/+Zomd/SAOdVbVBEOZVrRGEUzjQ60+dGykMMte9IbQse1Fofc6lg3UDGPM0/w8aWura0SL+BUVFj4wIwFHlkEC/IP9DFaPf8b9GONCdCH0qtLwqlWUKo9AvgrDVtYN1A9jytHxIWgkfkhio/mCE4FeLA6X/KpWgE1Kg3yD0qyAcpyXlrYWnKyvjhYkuHqpbwJAn/R/08t5A4S0Xj5V3QQsiEsjv8AeCUNkk0F0IHRC8q2ndq+bf+Nblrh0v77DmKX1IQmnCQleOlsC5oEWC8OcTV4syhWjUJNCUsxWjhGEIbdzwb5RuFlR4zdUj5hvWPOlmptPb2wqrXT1izgVF90jeee1pGqh/y1ZCi08QaimsPdWSJlkXL0xw9YA5hy3P+v9Bw065esC8C1rzxvAwn6isr1HTQHcNbpuyH9FA1wreNMnnBG94j5eFLU9J0BZRM466erzcC2oPmixgGNzmCYICBG7zBEEBArd5gqAAgds83VVQoJkAggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlyjWdDK8SZK6iDlWr0cHk16uumaE/rPp/3vc3z3TsGZecryOhnFP41d51/xKkdrO9+9ZkFrPxIpG6O0roGdnUNIT74XLNPnH83GtHsdPzjlacd37xScmacsCxaK4sQ1xq4z/WlRTNqvaVHdb/GH4/SuQZmdN5LWv17QTyNzMS2+wj8u8RRBLTgjT1kWvIzQPKMFfR+h0c1J0OGkbQmCGsEf5O+2+fI9J/CPk561FvQ4mX/B9rJKlOJFP7jarARdQs9MHUKmQVBDeDDaZOpmvjLivb1NprZTrAWdG2sydd6ibd0T+plMIfublaB3r8PNi+3INAhqCA+sRui+POnnhVjUhNusBZ2zAaFZm7Ste9wehMbuBUE9CRDUGhCUM9xG0GeTMV/LrxsERdmPlWEuO34MzsJtBJ2WU1Q05g35dYOgaLh3UFBQ4EDHj8FZuI+gBQhNAUEpMoIOTsfNRz5RmOjfHD8Sx2Mzz7OFGIZvYk6Qul/ZO/sfLp+wQhL0KP4542n7gv6HrLvR1aRB0AaUBN3pU4qJ/dbxIzGKX56YnnHHSlsq2cxzQ1RWVtI85dWuisnKSljKPoyHErOygjIlQe/rl5XVLsu+oLMGZGV1b3Q1ad4FrdmWT1neXesa2FEU1JdM93UfQd/1SVu0clG6n43XzKag+XMRWnuP8npzsxF66mH2cTz4DELJkyRB730eR3irfUFnbkZoRqPtobwLenHeXEpWR61rYEcS1O8H/GdyKonO7QXtU0jv9iY2nQWCWmMR9LCmpZEz3+K9uuN/NFvPQG4hqHyeAWfpXVWwjQXVCLorGH9EfKVhmlXQfLyYv39QkO90+4I+g2tC3rct6HI8z+cx+4IuwvNDiw0V1Dcp74SmFThPUOEkbmJvR24hqHyeY+aTTxsVi8c2naVK0Lx7yspyHmiYZhU0+/GysqTRZWX9J9gX9J7VZWUz8m0Lese6srJuC+wLOqmgrCz9H4YKen5Lus/YAg37BICgNpHP89gA75iUWJ8Bx5vOUifofQit1iJoLkIp4xAaICfoWoTm2hP0dYS6ywm6G6EJxgqKOfVyR//pn6ldAQhqD7k8677bnv/2940fqX4pl/JAuI1yFkH/+9fc3Iw5+P/KkXgtP1rX/UTWfKRh2pmCpszKze29Q7+g1R8uCAud+1Coio0UFBDUNrJ5Vq8yzT+N0B/pDQ9dWppNmR1mo55F0GdSsrOjBuG/Vl2ys4cvs6577Ibs7CE5DdPOFDR0WHZ2myd1CzorpOO8j6oRKgmyWaZyu53BuKGg8nk+EvnkmNSr6KiNbSia3+JXPYRQBhZ0zGCEcq4VdAXu84mGaacKivttr1/QhZ9KR/xc+tRWldrtdgbDJmgA3VV0teOHw4J8nl2LUU3GkyAoA/URXTiJjp62V6V2u50R1N5MDyL7AbEK2oYM8q+LHTQctcjm6VeB0JHQPxwm6I3kV/WlhjpHCRqNu2n5YcN678bTrQ7ICzoF17Rmf7OzRLQv4GX0kv/7dqrUbrczgipvcqzBsO3ILQWVz3PQ8lqElo097ChBTUMRWvloQ52jBO22EKHb3mpY703vIJS5S17QUVjoER/bCaYplojiVtWiunUJdqrUbrczgiof0t7qpoLK5/lVp3bHUdWEABBUEUtEbcpwU+Znp0rtdjsjcG9B5fNEFz6/gFCdmNN0DrOg/8Yf+dMmKwt6CNcNvcfxgu7B/URvsi9o38nZ2UvOaBY0+W+4Kehvr6zpdrtK6TOJIAQy96UObYLeSscU76AxsaOQp32YBX1hSG5ufH9lQR835eZGjnS8oLfckZsbmG1f0JCxubk9P9As6IGA0XeP9RPtVO04j+rWm8YX1DWdxdlf0HEpuPmts4PGxI58njKwC/oX/GGIRdDHERruDEHfRqiznKC4zzTtgqLf8u5bddRelU8JWhO8YlX42qazQFDbyOYpQ32edWVlZWdP4uaqJOiamfjn6oZCi6DPzseP1/Aj6MRtZWUZxgt6Yf3TBDtVWNDrdyL0ZW+ZQI3GvQWVz1OG+jwLWwcF+bQMCvK7VxJ0Jvn5oYZCi6BZrYKC2jzOj6BdfYOCWuQYLmhm8G23Y+xUYUGjjiBU7isTqNG4t6DyecpQn+fmmQjdGY3QhjmSoFPxjFfmNxRaBJ2UjNAzD/IjaKeH8e0RwwX1+0muymf1wWnrEHotViZQo3FvQeXzlAEEtcYiaOI5uap5qWFCJNre6q2msxwh6AfkGLjIFuRHdxVUPk8ZFAX9lhzH8D6boJ/j0uRZyoLePHju3D4PaRe0EPcTucZa0P5j587t9pphgopTSy5dvixzfHnFYXTI1hdUjhB0U1Zpael3dGjuKqhinvZQFPTlEfn5UxayCbpifH5+dKqyoP375eeH36xd0Ky5+fnXPWgtaMcJ+fkByw0T1L8F3YCoI1AD2YR/6dF5txZUf552BcVivMgq6GMIpaYyCIoD7qdHUBx9l2sFxX2HGidouYSOQA2kkaA3voz/mK6bQH50K0HV53mslLLPsqXEEYJW4Q7+/WNp6d1Pygt618rS0mmvNAg6Pbe09NaNCN3+DF5BrXZBU18vLR2iTdC6N+8cf2q9jQ3xSjhY0G7t8L+j13UhP7qVoKrzrIiJonS9zvyAIwRdERwV5esXFeUzUV7Qvm2jolpPbxA0NiAqyhuPIRrft31Lu6AhuP8WL2oS9IXQnLCyiKfYA7XgYEG7ku9JltC9zNkF/bFlEKbjv4wfGTP683SEoMtycGJjEBqUIS9onykIxU1tEDT6ToR64RelBx7Ln7ZqFzT4GYSCVmsSNPwAikDF3diDvHhHFiW9A/syrOgVtLgFOaPYDR8ZPzJmVOdpAQS1xiJo2/M40PP+7EHW7CykPBfJvgwrugVtSaZHulJQ1XlakBV0cY+srP4ZbILOjMvKir+jQdBpfbKyYme7raBpK+oi0EvDdQRqIB4gqP48bQk6JbywcHACm6BpMYWFfYY3CDosobAwxuS2gpaE9/RN7lCsI1AD8QBB9edpU9A+WAhWQYfhCBoLmobQUPcVFF3c+fx2Ld9+gKC20Z2nRdC1NxYVLZ1hLejqyUVFD97drARdK6EjUAPxAEH152kRdKZvcnJInLWgt7VJTr4uqVkJOn78+Iz41nN0BGogHiCo/jwtgk7vjYWItRb01r4I3dyvWQlK2Xi/jkANxAMEpejKEwSlWAl6RcM3MCCofXTlyYOgwyOSk0Oz5QXtF5WcTMRzgqA1G0N1BGoM0kFv+HUwUtDqQLrWRmcYcAoyeTKcSogHQWPHFRVFTJcXNHxqUVGHBxwuqA/GW3iOebmmgRoD2d8FzcSvi5GCXqbzyR61TkM+T5ZTCXEh6B0I9VYS9D7pVXKwoD8TzrK/AE0DNQZPEVQ+T5ZTCfEq6E1/LiwcvsHpgi6oh3HB2t0O+arTUwSVz5PlVEK8ChoVlZXlP9/pgj7eYuzC8S3mZGdnMy5YOcW8s4iG/1tlMFDQ1N1l0kG7rhBUPk+WUwlxK+jdCEXOc7qg48i+0gUTVbwE1wZqDAYKGuIXJB206wpB5fNkOZUQCEqxCErfdM4FMC/XNFBjMFDQIPIRhXyT7QpBFfJseiqhigQ7OyyDoJT4V3GzNUbNayABgtpEfZ6/2DnkAwSlvNs6c/GNrd5UEagZENQm+vMEQSn1G+p/euzOJRr2DgNB7SCb52wLTWdpEnTZmPz8W+Z4tKAKB3k57SIKniKofJ7b2ifeS2k6S5OgE0Lnzu020KMFlT/Iy3kXUfAUQRUOmltqd3OzNkEHSM/cgwWVP8jLeRdR8BRBFQ6aO7TF3hwQ1Bq2g+acdxEFTxHUuIPmQFCK/EFezruIggMFnbCqCHPK0OHafx6GHTQHglLkD/Jy3kUUHCho147Jyck9bjN0uHYx7qA5EJQinpQ9yMvGRRSuM19EQcO3TzI4UFCSINpxs6HDtYtCnvYBQa2p/5Ake75/Gxc/bRKoMXiKoPJ5ygCCWmMRdE/6Dxfsn89S7cVPtVDzFLnYb+Ru5BGCyucpAwhqjUW5dt5y57NUe/FTLfweQC5q3gY/BU8QVD5PGUBQaywRyp/PUu3FT7XwO7UwyEME1X++VRCUIimXeQF/6qm1X6X24qdacI6gK6UPdlcMGrQdlPKUAQS1RlJOwL/q7Y7ar1J78VOVvJuMSWxDfnS0oIvpkcB+F/UPWg6lPGUAQa+Jki1QlRc/ZWcr+WQ0Mr2oqOhv9KoezVbQqseyKbMtx9KDoFKUWgO1oFPQ/n/Bn4xicL7oG4cI+kJaYWFhQWsyzbegV/NyKQ+Emx8AQaUotQZqQa+g5MuWCY4T9M6ArKysTLoqvgW1AG/x10QptU/l5fk+mpeXpyNQbTha0BnkCIpypwtqQJ4gqBQlbZMt6AhUG54pqBF5gqAUDZuSJS4tnEvJ6qRxBRULyOLtP0MeKKgOQFBrNAtavTmfsjxC4wr+1Zks3voNBII2BgS1RrOgTQJVy7/iSdvGJYK2+Vdpaem//kMO89V60VdHAYJa0zwF9eoeFRXVOgA3YTZ20HIpIKg1zVNQ4TRuYv6Em49HaBy+owBBrWnugr7dgZwB7U+XND4J4wFBrXG0oNvItyOrrjlUpIQ8eD895NHVgj7vT84hGXJM8/M3GhDUGscJWnOIHKPmf392dna/ddazlg7HD97sQ350uaD0XF2d3iNj5eKjPQhqjeMEffc6sqWaWnXPNdcLWorHi3ZxJGirGDzUTs/qiMEwQFBrHCforkzSep1AbiBoy69xk52rNQMjAUGtYRRUw7mZGgk6KsZkMt3QEzem7iNxEzkDNXNBDb7KR7MXlOXcTMceJrsz3kyapX8gK0HjRomi+Gd/3IgtX8BN/GjEoaAzU/HQF2WRJ5C1CDd3zcLN4lvJ9KPnmWJixuirfDR7QW2cm6nuM5GysYcl0M74b+NIgfyZbP8InrEimcwWCnETca2gZNZKbzLtsww3g3rjZl0LMh0wFzfpXXGzWyDT7W/FzdRguqrtuOmWhpsFdFUtXsJN3PW4Wd6aTLd+FDcDyarW0lW1vQc3Y8iqdkqrysLN5BC6qh24CTfhZl5buqpXcBMbgoee2II8gRaJuAlph5uBXmQ6iD1Q4/JMl4IYHS6Kad1EcVSEKI7sLoqpkaI4LEoUb+ghikN7iuKQXlKA5JkPiBXF6+NEMSleFPsniGI/fEtMFMWEfvjWHwefJCUWO0AUew/Et0Gi2GuIKPYcKoo9bhDFqGGiGJkqit1HSi8aSTt8tCh2xWPpMlYUO48TxbAJothpoih2nCSKHW4SxdCbpVeJxBsyWRSDp4pi0O34docoXjddFNvdKYqBM/FtjvTqkpelL3uebILaODdTRbqJkppkfuCfdJJYauo9EDeDoul0Gm7iknEzNJJMh5O3+IS+uBkeQaYjhuOmfx/idlcyHTUEN9fH4iaNriqarqpX/api6aqiGlbV75pVJTSsaqiNVQ1stKrr61fV1daq+tFVhdOndYQ5UEPzJKMnt2Ryi5NuSeQWL936x0vh0VuCNGRy60tuidItkdz6SjcSPHma5Nanv3SLJ7ekhltckvSCkRtJm8REbjEDpFtvckuRbtEpUqyWWy9yGyTdeg6Wbj3IbYh0I68ufVnY82QTVObcTIAGIE9m2ASVOTcToAHIkxnGT/FNz81km9qOyRro2V3LUu37aVgotouWrsI+0ZeyljzXhrONjTW8qB5sdRG92Oq6xrDVdX5XV1K6t4Nac7VVkQbu/ZOWpTru0bDQMyO1dJX8gbExsbBuEtvY7r+drW7OPWx1ty1mqxubw1Y35O+6YjBaUG8tS5GLVKgn3NZmRCXeuUlLVyo2ixgG2czEwuoH2OoeXclWt+BltrppBWx1Ge+x1dkBBGUBBG0KCKoECEoBQdUAghoGCEoBQVkAQZsCgioBglJAUDVUt9WyVN4SLUtF/q5hob9naenKdEDLUvrYehdb3QuL2eqW272qmDX3rlOuIUx/i61uoo09YlRgsKDojJaFLl9wWlc1Gs4pi9BZu9eIdBxXGPegYg3vIuNxV5VVbHXnqtnqyrSdJ9WC0YICgKGAoADXgKAA14CgANeAoADXgKAA14CgANeAoADXgKAA14CgANcYKWjduGUIHU8PTFC1ewBdap4PZgfzMuZydX2ZF1LZ1cU5nUIfrlX/tPSwu69v12UMfe7q59fnbcXIt81G9TVypbTOutx+3VdD/MIfq1Gu29e3Ta/NGqyox0hB8wSsWsq8M2/6/KJ2qdTVJSUl7KfvMJer68u8kMqupkw9cTD0NfVPSwdlrV4s+zJwm2KfxX7vXPisw/fydYeWtSeimGvsl5rrrMvt1l3otLziUPdnFOtOBWy5sLf1NzriM1DQ4si0Zeg773MIpT2hcikUdlBVV1K5yr7Mfajr6rj/Wdz8pvpp6eHCdRsufhO8V7HP1cNxs+B++botCxJn10clUyrVWZfbr/u8XS1CT5oU6/4RiX9M3qQjPuMErYz5cPIytD0G/7housqlKoRpPVLWMO8yZC5X15d5IZVd7Yn9a9/+ebVqn5Y+PhG8hIeVo9wbeKCmuEemUt29WBRzjWzpvbOvLbdfd+E4QjVj5ivW1VajKwdC/q0jPuMEnbkEYdXyycm7VmaoXOpw5NqfdwRvYF3IXK6uL/NCKrvaIMz7cX+n9Wqfli6Od9hSVRzxjmKfdTkBPgmTTUp1RBRzjWxpI0FZ6kozUk8z1JV7CUvrdMRnmKBvDrhCVHs7Fv+86A6VS1FWmFR1uMKksq9GfbB3VRBSg9/LRmvoSjv5g3CTO4mhz9oKdM+dSnVEFHONbGkjQZXrqh4JzbnKUIfQ1S8SXtQRn2GCzvALCfH2jf3OpxKhdMajC+qXOrQd/7xqPOtS5nJ1fZkXUtnV50TQ3AyVT0sfrwzEzVPjFPssnXEZ1UW/pFRHRDHXyJY2ElSxrm5iOjnFpmLd6+QC7ksm64jPMEHPHjt2bOLC3+oGZF/Z58d8tJB5qW9bbj33Vfg21qXM5er6Mi+ksqvamIfKD3Z5VeXT0scvbddXfhG2VbHPqrDskyuCzyvVUaGkGtnSRoIq1okBh48ePfqHYt2nAR9fLu6+Rkd8hm6oJ2/Wx0YH9dmneqk3Ynyi2T+5WMrV9WVeSGVXR9ICIler7UonBwb59XiBoc+v+gaMOKwYORXPXCNX2khQxbocgZCuvL61PXwin6rVER98kwRwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcA0ICnANCApwDQgKcI2bC5q9AOW0X18itNtleeSg8MO0NgNdOSZ3hr883V/Q+O2oxL/hkTOvl6PtIKhG+MuTX0Hrcrr4Dv0Rlftv7dHh+bXdA59A4qicLl2W1l/DdEdc4KTZC25sGbK5caDlwmUQ1BZumie/gn7k9+XJW27EAS28tEa469IGr4ui94wTX4Tnmed/7/3qmc1e+DdeRDwFyi1umie/gu7321t96TQO6HdUIfyKLgknRJ8KhPKTzPOXZuImnbtAucVN8+RX0LqtgwOnfI0DqkSXhXJUjQONwg9/2t48f8Zi3CzkLlBucdM8+RX0f/9Bp1f6VTUO1O8yQpv6muc/chNuxnMXKLe4aZ78Cpof/n358wFXGwcqzC8r6v6Mef5h723nC7wbAn23mD7s6kC5xU3z5FfQKzODfZP2W70l9V7SIWzJVUvBO7EB459oCLT3IvqoqwPlFjfNk19BmyLG25lBA/01r34aBGXCLfJ0P0GLb5d4vmEGDfSp3+unQVAm3CJP9xPUBo2/msPAV51suEWe7iQo0AwBQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBrgFBAa4BQQGuAUEBruFd0OpNA0Pa9nn4tFJd3WvpnYIGbap2xpjcGcY8hwqYLiM21jllUHLwLuhCHJSXIMRVypfV3CZQJtU6Z1huC2OeQ6U4hVznjEoGzgU9JQjLT1zZ7S+8KF+3SRD+9MVPjwnCeueMy11hzXOoMK3y/MFUIeCMc8ZlH84F/UwQzuO7lanPokpB2D0icOgP7yf5D/kGnRaED9PbDfyHVFbXVcgg70ZZwgRXjpZ/GPPEgs7A7Tk/4WnXjVWCc0H/KwjpOyrojzhQX/zmFNIKN9F1ONBOXi0Er/fpPPyH4e/kvvznX1w3VneAMU+zoGiiMM1VI7XAuaAom/zPFD37QxrorKoNgjCvao0gnMKBXn/q3EhhEK36XBBKXDxQN4EtT4ug84QBLhwrhXdBUdEjIwJwqDkk0C/In8pi9LsgHMWB7kToU6HlVVKEBf3R1QN1E5jytAg6X0hx5VgJ3AuKqf5ghOBXiwOl/yqVoBNSoN8g9KsgHCcVJwXhPXJ/6psfXDtUt0A5T4ugk4TbXTlQAueCFkQkkA8/HwhCZZNAdyF0QPCmWz7rugi3kPvZwnCXDpd7GPNs+JDk8u1MnAtaJAh/PnG1KFOIRk0CTTlbMUoYhtDGDf9G+H+pBd8eebaF6z918g1rnnQzU9FIIfCsq0fMuaDoHmmDsdeepoH6t2wltPgEoZbCWlRzs1Q39KqrB8w5jHlaNtQ/4+rxci9ozRvDw3yisr5GTQPdNbhtyn4kBYrqNpraB6e8VOXq8fIOY57SV50jX4WvOrVyGjYsGQq3eYKgAIHbPEFQgMBtniAoQOA2T3cVFGgmgKAA14CgANeAoADXgKAA14CgANeAoADXgKAA14CgANeAoADXgKAA14CgANeAoADXgKAA14CgANeAoADXMAr6yxPTM+5Y+atjxwIATWAT9F2ftEUrF6X77XfwaADgGtgE7VNI7/YmOnIoANAUNkEDpBNMVAU7cigA0BQ2QcfMP4fbisVjHTsYALgWNkGPDfCOSYn1GXDcwaMBgGtg/BRf9932/Le/b/xIZaaJkprqgFEBgBk2QWtf+602f3RG41P11H4kUjZGOWhkAIBYBV3S4fjqsCdzO+c1nXU4zuARAUAj2ARtX4T6igh9beOvpesE/XWM9E/Gp64agJvxn9Em08RLrh6FWtgE7XASJf6EUFlg01muE/RAH/o/RuZLrhqAm/HeAFEMPuHqUaiFTdBZU8ty59fUPDi66SwXCnoDvfszCMrGexkIdfJQQS9O9o8V2ofEljad5TBBd0tv4OPK7RWAoOrwZEEROrZnQ8EXti6E6TBBH72TvoN3+Y+9AhBUHZ4tqF0cJ+hKetfLIwV1xd5hIKixeLKgztg77GgbQfD9udEDIKixeLKgztg77Du88uSiRg+AoMbiyYI6Y+8wEFQCBNWAM/YOA0ElQFANOGPvMBBUAgTVQtO9wwxHWdCqoqIiu+nygmZBK4YkU+KDjBxOI1QKeos0nGUOGo2x7DiP6tabxhc48kJuyoK+2j45yceBIzAEzYLWfVdEKYw2cjiNUCloyIdkNK/Y+DKWQ3xK0JrgFavC1zqwD2VBN8xBNSWCPXIAABKbSURBVC0dOAJDsAh6WOsKeHmLDzlD2v28CCqfJxb0+p0Ifdm74aHa3YWUN18zaAQeJqhvUp62/5+NF/TkIPpmHTaFTrmpoPJ5YkGjjiBU7tvwUOWULMrYDgaNwMMEPb8l3WdswQX1KzBe0H9F0f8d+o+iU4qCTp9F//IE8CWofJ4+qw9OW4fQa7FNZxmWp4cJijn1ckf/6Z+pXYEDBI2nd8MYBU3sSv/yCPRbPW4ERbJ5zksNEyLR9lZvNZ0FglpTL2j1hwvCQuc+FLpU5QpcLmhCFr3zonVGC7q/ZxQh5ifVSyrlWXEYHfrWxuNa87zYJSgo+MtGD3iYoLNCOs77qBqhErVbjZwj6NUd0keIk43qnCHo2mmlhIEfq13Q6XmeCS4ry9jd6AEPE3ThpzX0/pLaI3ycI2hREH0f7726UZ1TBL2H3o34WO2CTs/zTAhCkzxYUHThJDp62m6Z/f0XnSPowevpxIPPNKrjWlD5PGdbaDoLBLXGIui+gJfRS/7v26mS2X/RqYLedUs+oYDu2m9L0L/H04INZwwai2ZB5fPc1j7xXkrTWSCoNRZB41bVorp1CXaqZPZfdKqgAyLmEvzpTha2BM31oQW9Nxk0Fs2CyueJli6wNwcEtcYiaJsy3JT52amS2X/RuYJOoHddj5HWpqAhdGL2RoPGollQ+TzRoS325oCg1lgETf4bbgr626mS2X/RSEE/oO/Pj3enE+4tqHyeMoCg1lgEPRAw+u6xfqKdKpn9F40UNPFW8v6cLu1h496CyucpAwhqTf2n+N/y7lt11G6ZjbPbRQRRAtsZN5gE2sMuK0H929FeJPHcR1CFPO0DglpjEfTC+qcJsrWxvzWeOldG+TLGuMHYEtR7J+llrT+dcB9BWfK0CQhqjUXQzODbbsfYqVpG8V1oY3dgI9/ibQpK3ya3upug8nnKAIJaYxHUT/bb5nFC2uTJk70nTm46CwS1iXyeMoCg1lgETTwnV1WXF/khQiHHbMziX9Bz6+nGgXwtG+81CyqfpwwgqDUWQcWpJZcuX75st644ZslVNxX079LW/Z5/0zAizYIq5WkXENQai6D+LQSC/cLKmQP83FPQ3ZPo3bQCDSPSLKhinvYAQa2xRFguIVf65oyzNh4FQW3CkKdtQFBrLILWvXnn+FPrNRwGC4LaxOl5GiEoOVCetysNWQR9ITQnrCziKfUrMETQzdJG/1Z0bynHCtpT6uoBtoFpFtTpeRoh6JNhyQk9tHXvMCyChh9AEai4m/oVGCJozgN0o7/PDjLhIEFHT8kleJ0hPW2+jW1gmgV1ep5GCLr8cfQ/DUN2KBZB257HgZ73V78CYwSVvgHwdaSg3ZOyCUI1mXjL0YKqzrNur3RQy3Marzvl6YKmraiLQC8NV78CLgXtSz9CC8FXyIRFUGkXTEVBZ0jLSidM0Syo6jwvmI+LTw9V25WEpwtaEt7TN7lDsfoVcClo9Ax650+PS1cpaMZ7pC1vQ/8huOlm+ph6QZ2ep6cLii7ufH67lm8/PFTQ/wn0H4I46dlp2JvJ2Xl6uqBrJdgXrPCT3gqFtgaMwumCLjMP/hMyURMoTdxPC8yCetGJqVoFVZ2nBVZB44KCgnY2mvZ0QcePH58R33qO+hW44i9o8Hzy1+12qWdNgt4bTidueoe0VVKHW6SFjBHU4Xn6niibtabRtKcLStl4v/oVuELQln8m/x/eKF2YkU9BKY7M0/cymtfsBL3SWf0KXCLo16R9Rb+gEdJ7uySj8YI6Ms/mKGjNRg2bOHgWtPUD5F+BWwbRCVuCds4m7XkpBMMFdWiezU1QH4y38Jz6FfAsqPAo+VdgVCc64VxBHZ5ncxP0Z4KtvZWU0CfoH62lN9k0OmW4oKdIu4xR0PvMn+ypVXoFdXiezU3QBfWoXIE+QUulL/ZGD6V3rhV0jrSfRCg99bheQR2eZ3MT9PEWYxeObzEH/8tms8xRJw/zWEEV8rQPCGqNRdBx5FwsBRPtVDns5GEeK6h8njKAoNZYBKVnXzoXYKfKYScP81hB5fOUAQS1xiJo/Ku42WrvJAwOO3mYxwoqn6cMIKg1FkHfbZ25+MZWb9qpctjJwzxWUPk8ZQBBranfUP/TY3cusbt3mMNOHuaxgsrnKQMIag3jQXM2Ln5aYT43k41r/bDjsYIq5Kl/q0hzE1T+IK/qVab5pxH6I73hoYow89ntAvV077GCyudpwFYRpwj64dy5c7eyjcdRsB0090jkk2NSr6KjNk5EAG/xNpHP04CtIk4RdO4d+dmD2cbjKNgOmutajGoyngRB2ZHP04CtIs4RNB99wYmg8gd5+VUgdCT0DxCUGfk8Ddgq0twElT/Ia9DyWvxCjz1soKBr6Rm9pkhCeZ6g8nkasFWkuQkqnpQ7yOurTu2Oo6oJAQYKmvIwOSXiIm864XmCyudpY6tI3WciZSPjqT2am6Dh8uf7v/D5BZyhmNN0jmZB/4+0n3iqoPJ57jiP6tabxhc02gxVkWGiDG7P1kFzE3RP+g8XnHo+Sw8XVD5PnxK0JnjFqnAbR33CW7w1FkHbeTv5fJYeLqh8nljQ63ci9GXvprNAUGtUnB/UNiCoTeTzxIJGHcFFvk1ngaDWSK9NJv4Ps7JW0wrYBa2aJZ19SLrCqkcLqpSnz+qD09Yh9JqNr4lBUGuk10bAv+rtjmpaAbugvwXR07dNl07N6dGCKuU5LzVMiETbW73VdBYIao0zBZWOEl8NghIqDqND39p4nG9Br5SVlV1hG6BBgKAuEtQefAt6W9sg/xlsAzQI7YKWFFEKo1kXMAu66g66XAIIahO+BR3/Ltp+K9sADcIs6FN5eb6P5uXlsS9YkZJMiQ9iXcIs6E1+dLkWdDcuTxVUfZ4WQFBrpNcm2YL6Fah+i58kdeK/mbQeKqgT8mxeguqAJdDf6Zv63o50ojkIqgMQ1BqnCDqqN/lrEiuFAYLKAoJa4xRBh39K2mIQlAE7eX5RWFhodSVKEJQRENRY7OTZMyOrz6ONHwBBGQFBjcVOnj2OoCceafwACMoICGosbibortzc3EN2n4wBOFbQy9LG/CR6MQ0QlAU3E7TfzOy0e+0+GQNwrKDrQ+nWwJYvkwkQlAV3E/Qb9LwbC7pmHr1r9wJpQVAW6vMsmTt37pL6h0FQrYCgxlKf5+Yh+fkNr47bCHqqtLT0qu2npglGQTWeSwgEtQNDnptnNn513EbQrhFR1z3f+IHSoqLiGqQZNkFZziX0f9JRiaN/JhNXJtGJGOniCCDoNbDk6aaChp5Ci//aaLq6VXJycOMdsysyTaZx/0OssAlq41xCTY7j3pxAL78a/jR5dGdrOhHbndb4LyDt2hZ0Ykgveuf7EGmfbUknkuPpXevHSbvSm04k9Kd3rVaRNtuXTvQeRO9avELahX50IjKV3nltIe2cQDrRdQy9E94m7bQgOtFxkvTYPtLe3IFOhEwm7W6BTozrTO/a3UnaAi86MSqC3vX9mDlQ4/JMx4MVxTf+Ib6/VRQ7bxGn3i6K+Elu3Su++zec1R5x9F/Efa/hx/aLO7eLO/xFMWml+N42WlS4S8wPF8WINeLut+gDBXvEJxPxk3tLfHunuB8/8No+8YFR4j78mvztXdoDXs3028SCjriH92kPuGj8AjEvTurhbfrAwBXi0uGi+KoovrVb3I8777lWnHMTnbXtPXEv7vy6t8XMObSHrfvE3W+Ke/ErPGSJuBf3gMvf3iG+3jY7uxt7nmyC2jiXUEW69BczNcn8wD+l6Z5DSDuqK51IjqN3kUNJO1J6rH8fetd9GGlHhNOJvgn0LmI4aYdH0InEvvSuWypph3WnE33607uuI0k7NJJOxCXRuy6jSDukB52IvZ7edU4j7aBedKJ3Cr0Lo21KNL3rNZC0aZ3pxIAYetdjMH0CnRs/AdMR5kANzRMPInaA6YYoHMMIU79E06hwGnBKbzorLtk0DGcQkWrqn0AT7zXINAg/sS5ppj5JNEYccnK8Ka0LfvYDTYN74uRGmRL7mUZ0M5mibjBdH0dXE5NiGopj6zaSRE5epB5DTSk4iy40R+seeg42DZR6iMc9dKcvWZLUQ/Qg0+BedFZCP1Mq7jxyGOkhraGHcNoD6VxFnmyCypxLCNAA5MkMm6Ay5xICNAB5MsP4Kd7GGZZZeK5bsl5C++pdQ1xn3YMI+0T1U9ed59pwpVF1i1aq6JCoVBGkVJDQUamiV4RSRddXtSelezuoLHm3FuklfKfeNTw3XPcgkj9waEw2WTdJaVS3LlGqiH1doeDrFkqr2JyoVLFoqlJFxmbtMThWUPN2UD30/FnvGsyX49aDEzfU10M2M8ljtZnJJlabmWxhvZnJFsrHxSt/k3T7NqUK+4CgLICgMoCgOgFB7QOC6l4FCGoXEFQ3IKh2QFAKCMoCCCqDOwu6fqHuVcQc1buGPTfrHoTpgO5VqGbrXUoVC9crVQy0dXqyxtT6Ka3i62FKFS8vUqqYoeGapRYcK2hVhe5VnNG9hhoNp+W9hrN2r2noOK6cV6qoUDzPnHJ4ihV1Z5UqqiqVKs7p2EHUsYICgE5AUIBrQFCAa0BQgGtAUIBrQFCAa0BQgGtAUIBrQFCAa0BQgGscJuhXQ/zCH6tB83wwO7StYl/fNr02I3Q8PTDhPV1r0DMIhOrGLdM1CG0odmgOWBY6dBkuzukU+rDsJTB39/XtukymYttspDBWWsEyWNs4StALnZZXHOr+DEpdXVJSovitsk1OBWy5sLf1Nyhl3pk3fX7RswYdg8DkCfhV1j4IjSh1aAlYFjp0GaZMPXEw9DWZgrJWL5Z9GWh3Z6RDy9rPlh+rVME0WNs4StDP2+FfuydNKOyg5lX8IxI3yZu+8z6HUNoTOtagZxAIFUemLUM6BqENxQ4tActBhy7Dcf+zuPlNpuLCdRsufhO8197sLQsSZ8uPVapgGawdHPYX9DhCNWPmVwjTeqSs0bYvUG01unIg5N/bY/DPi6brWIOeQaDKmA8nL0M6BqENxQ7NAcutQxq6DHti/9q3f57sW/wngpfwsMz8e2crjZVUMAzWHg78kFSakXr6cOTan3cEb9C4hnIvYWldfgr+aWWGjjXoGsTMJQi/yroGoQWWDknAcvOlocuwQZj34/5OcnuVHu+wpao44h37BUQ/+bGSCobB2sNhglY9Eppj3g1whaa/7YSrXyS8+Da5qPqiO3SsQc8g3hxwhbzK+gahAeUOGwVsG/PQZSgIwZ9bnhwtU5E/CDe5MockEP3kx0oFVRysXRwlaN3E9D/w3aHtuFk1XtMqXs/BzZLJ3/lUIpS+Usca9Axihl9IiLdvrI5BaEOxQ3PAMpiHLlPxORE0V+7P9CsDcfPUOPsFRD/5sZIK5cHaxVGCigGHjx49+se3Lbee+ypc2yEpnwZ8fLm4+5q6AdlX9vnZOtcr6xr0DOLssWPHJi78TccgtKHYoTlgmVWYhy5TURvzUPnBLq/KVPzSdn3lF2Fb7RdQ/WTHSiqUB2sXRwmaIxDS0RsxPtFaP5+s7eET+VQtOjY6qM8+XWvQMwgMeZ/UMQhtKHVoCVge+bd4dCQtIHK1bDAHBvn1eEGmgr6By46VVLAN1ibwTRLANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDUgKMA1ICjANSAowDVuLmj2ApTTfn2J0G6X5ZGDwg/T2gx05ZjcGf7ydH9B47ejEv+GR868Xo62g6Aa4S9PfgWty+niO/RHVO6/tUeH59d2D3wCiaNyunRZWm0p2BEXOGn2ghtbhmxuHGi5cBkEtYWb5smvoB/5fXnylhtxQAsvrRHuurTB66LoPePEF+F55vnfe796ZrMX/o0XEU+Bcoub5smvoPv99lZfOo0D+h1VCL+iS8IJ0acCofwk8/ylmbhJ5y5QbnHTPPkVtG7r4MApX+OAKtFloRxV40Cj8MOftjfPn7EYNwu5C5Rb3DRPfgX933/Q6ZV+VY0D9buM0Ka+5vmP3ISb8dwFyi1umie/guaHf1/+fMDVxoEK88uK6q8Vcdh72/kC74ZA3y2mD7s6UG5x0zz5FfTKzGDfpP1Wb0m9l3QIW1J/Jul3YgPGP9EQaO9F9FFXB8otbponv4I2RYy3M4MG+mte/TQIyoRb5Ol+ghbfLvF8wwwa6FO/10+DoEy4RZ7uJ6gNGn81h4GvOtlwizzdSVCgGQKCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJcA4ICXAOCAlwDggJc8/+0MF110VoeEwAAAABJRU5ErkJggg==" /></p>
-</div>
-</div>
-<div id="logical-and-sets" class="section level2">
-<h2>Logical and sets</h2>
-<div id="union" class="section level3">
-<h3>union()</h3>
-<p><code>union</code> combines all elements of two vectors in a new vector of unique elements. Example</p>
-<pre class="r"><code>union(x = c(1, 2, 3, 4), y = c(3, 4, 5))</code></pre>
-<pre><code>## [1] 1 2 3 4 5</code></pre>
-</div>
-<div id="setdiff" class="section level3">
-<h3>setdiff()</h3>
-<p><code>setdiff</code> returns the elements in vector <code>x</code>, which are not in <code>y</code> Example</p>
-<pre class="r"><code>setdiff(x = c(1, 2, 3, 4), y = c(3, 4, 5))</code></pre>
-<pre><code>## [1] 1 2</code></pre>
-<pre class="r"><code>setdiff(x = c(3, 4, 5), y = c(1, 2, 3, 4))</code></pre>
-<pre><code>## [1] 5</code></pre>
-</div>
-<div id="setequal" class="section level3">
-<h3>setequal()</h3>
-<p><code>setequal</code> returns a logical vector indicating whether all elements in vector <code>x</code> are also elements of vector <code>y</code>. Example</p>
-<pre class="r"><code>setequal(x = c(3, 1, 2), c(2, 3, 1))</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>setequal(x = c(1, 2, 3), c(2, 3))</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-</div>
-<div id="which" class="section level3">
-<h3>which()</h3>
-<p><code>which</code> provides the indices of elements for which a logical condition is <code>TRUE</code>. Example</p>
-<pre class="r"><code>which(c(3, 4, 6) %in% c(6, 3))</code></pre>
-<pre><code>## [1] 1 3</code></pre>
-</div>
-</div>
-<div id="making-vectors" class="section level2">
-<h2>Making vectors</h2>
-<div id="rep" class="section level3">
-<h3>rep()</h3>
-<p>The <code>rep</code> function replicates elmeents of vectors and lists. Example</p>
-<pre class="r"><code>rep(x = 1:4, times = 2)</code></pre>
-<pre><code>## [1] 1 2 3 4 1 2 3 4</code></pre>
-<pre class="r"><code>rep(x = 1:4, each = 2)</code></pre>
-<pre><code>## [1] 1 1 2 2 3 3 4 4</code></pre>
-<pre class="r"><code>rep(x = 1:4, times = c(2, 1, 2, 1))</code></pre>
-<pre><code>## [1] 1 1 2 3 3 4</code></pre>
-<pre class="r"><code>rep(x = 1:4, each = 2, len = 4)</code></pre>
-<pre><code>## [1] 1 1 2 2</code></pre>
-<pre class="r"><code>rep(x = 1:4, each = 2, len = 10)</code></pre>
-<pre><code>##  [1] 1 1 2 2 3 3 4 4 1 1</code></pre>
-<pre class="r"><code>rep(x = 1:2, each = 2, times = 3)</code></pre>
-<pre><code>##  [1] 1 1 2 2 1 1 2 2 1 1 2 2</code></pre>
-</div>
-<div id="rep_len" class="section level3">
-<h3>rep_len()</h3>
-<p><code>rep_len</code> replicates and outputs a given number of elements as specified by <code>length</code>. Example</p>
-<pre class="r"><code>rep_len(x = c(1:4), length = 10)</code></pre>
-<pre><code>##  [1] 1 2 3 4 1 2 3 4 1 2</code></pre>
-</div>
-<div id="seq" class="section level3">
-<h3>seq()</h3>
-<p>Regular sequences can be created using <code>seq</code>. Example</p>
-<pre class="r"><code>seq(from = 0, to = 1, length.out = 1)</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>seq(from = 1, to = 9, by = 2)</code></pre>
-<pre><code>## [1] 1 3 5 7 9</code></pre>
-<pre class="r"><code>seq(from = 1, to = 6, by = 3)</code></pre>
-<pre><code>## [1] 1 4</code></pre>
-<pre class="r"><code>seq_len(length.out = 4)</code></pre>
-<pre><code>## [1] 1 2 3 4</code></pre>
-<pre class="r"><code>seq_along(along.with = c(0.1, 34, 8, 9, 2))</code></pre>
-<pre><code>## [1] 1 2 3 4 5</code></pre>
-</div>
-<div id="sample" class="section level3">
-<h3>sample()</h3>
-<p><code>sample()</code> takes a sample of the specified size form the elements of <code>x</code> either with or without replacement. Example</p>
-<pre class="r"><code>sample(x = LETTERS, size = 5, replace = TRUE)</code></pre>
-<pre><code>## [1] &quot;R&quot; &quot;J&quot; &quot;A&quot; &quot;S&quot; &quot;G&quot;</code></pre>
 </div>
 </div>
 </div>
