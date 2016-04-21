@@ -233,14 +233,126 @@ x[x < 5]
 x[x <= 5]
 ```
 
-### is.na, complete.cases
-### is.finite
+### Not available/missing values
+Missing values are typically encoded as `NA`, but can be coerced to any other
+vector type except raw. 
 
+*    integer: `NA_integer_`
+*    character: `NA_character_`
+*    numeric: `NA_real_`
+*    logical: `NA_complex_`
+
+The function `is.na` indicates which elements are missing in atomic vectors,
+lists and pairlists:
+```{r}
+x <- c(1, 5, NA, 4)
+is.na(x)
+```
+
+If one wants to determine which cases are complete, the `complete.cases`
+function comes in handy:
+```{r}
+# Vector
+x <- c(1, 5, NA, 4)
+complete.cases(x)
+
+# data.frame
+my_df <- data.frame(A = LETTERS[1:10], 
+                    B = seq_len(10),
+                    stringsAsFactors = FALSE)
+set.seed(3094)
+na_idx <- sample(seq_len(nrow(my_df)), size = 2)
+na_idx
+is.na(my_df$A) <- na_idx
+complete.cases(my_df)
+```
+
+### Finite, Infinite and NaN numbers
+```{r}
+# A non-zero number divided by zero creates infinity
+is.infinite(1 / 0)
+is.finite(1 / 0)
+is.nan(1 / 0 - 1 / 0)
+```
 
 
 ## Basic math
-## Functions to do with functions
+### Arithmetic operators
+```{r}
+# Addition
+5 + 6
 
+# Subtraction
+6 - 4
+
+# Division
+4 / 2
+
+# Multiplication
+2 * 3
+
+# Exponentiation
+2^2
+2 ** 2
+
+# Modulo 
+9 %% 9 # quotient = 1, remainder = 0
+9 %% 3 # quotient = 3, remainder = 0
+9 %% 5 # quotient = 1, remainder = 4
+9 %% 4 # quotient = 2, remainder = 1
+
+# Integer division (returns the quotient without the remainder)
+9 %/% 9
+9 %/% 3
+9 %/% 5
+9 %/% 4
+```
+
+### Miscellaneous math functions
+```{r}
+x <- c(2, 1, 0, -1, -2)
+# Compute the absolute value of x
+abs(x)
+
+# Return the sign of x
+sign(x)
+```
+
+### Trigonometric functions
+```{r}
+x <- seq(from = -3, to = 7, by = 1 / 8)
+tx <- cbind(x, 
+            cos(pi * x), cospi(x), sin(pi * x), sinpi(x), tan(pi * x),
+            tanpi(x), 
+            deparse.level = 2)
+op <- options(digits = 4, width = 90) # for nice formatting
+head(tx)
+options(op)
+```
+
+### Rounding of numbers
+```{r}
+x <- seq(from = -2, to = 2, by = 0.3)
+y <- seq(from = 0.009, to = 0.017, by = 0.001)
+ceiling(x)
+floor(x)
+round(y, digits = 2)
+trunc(x) 
+signif(y, digits = 3)
+```
+
+### Logarithms and exponentials
+```{r}
+exp
+log
+log10
+log2
+sqrt
+```
+
+
+
+## Functions to do with functions
 
 ## Logical and sets
 ### &, |, !, xor
